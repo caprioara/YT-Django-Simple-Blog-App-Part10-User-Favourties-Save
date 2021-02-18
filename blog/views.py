@@ -4,7 +4,7 @@ from .forms import NewCommentForm, PostSearchForm
 from django.views.generic import ListView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 def home(request):
 
@@ -70,22 +70,16 @@ def category_list(request):
 def post_search(request):
     form = PostSearchForm()
     q = ''
-    c = ''
     results = []
-    query = Q()
 
     if 'q' in request.GET:
         form = PostSearchForm(request.GET)
         if form.is_valid():
             q = form.cleaned_data['q']
-            c = form.cleaned_data['c']
 
-            if c is not None:
-                query &= Q(category=c)
-            if q is not None:
-                query &= Q(title__contains=q)
+            results = Post.objects.filter(title__search=q)
 
-            results = Post.objects.filter(query)
+            results = Post.objects.annotate(search=SearchVector('title', 'content'),).filter(search=q)
 
     return render(request, 'blog/search.html',
                   {'form': form,
