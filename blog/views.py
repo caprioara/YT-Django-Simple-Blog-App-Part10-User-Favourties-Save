@@ -76,10 +76,14 @@ def post_search(request):
         form = PostSearchForm(request.GET)
         if form.is_valid():
             q = form.cleaned_data['q']
+            # results = Post.objects.annotate(search=SearchVector('title', 'content'),).filter(search=q)
+            # results = Post.objects.annotate(search=SearchVector('title', 'content'),).filter(search=SearchQuery(q))
 
-            results = Post.objects.filter(title__search=q)
-
-            results = Post.objects.annotate(search=SearchVector('title', 'content'),).filter(search=q)
+            vector = SearchVector('title', weight='A') + \
+                SearchVector('content', weight='B')
+            query = SearchQuery(q)
+            results = Post.objects.annotate(
+                rank=SearchRank(vector, query, cover_density=True)).order_by('-rank')
 
     return render(request, 'blog/search.html',
                   {'form': form,
