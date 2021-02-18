@@ -32,9 +32,6 @@ class Post(models.Model):
     excerpt = models.TextField(null=True)
     image = models.ImageField(
         upload_to=user_directory_path, default='posts/default.jpg')
-
-    image_caption = models.CharField(max_length=100, default='Photo by Blog')
-
     slug = models.SlugField(max_length=250, unique_for_date='publish')
     publish = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(
@@ -43,10 +40,6 @@ class Post(models.Model):
     status = models.CharField(max_length=10, choices=options, default='draft')
     favourites = models.ManyToManyField(
         User, related_name='favourite', default=None, blank=True)
-
-    likes = models.ManyToManyField(User, related_name='like', default='None', blank=True)
-    like_count = models.BigIntegerField(default='0')
-    
     objects = models.Manager()  # default manager
     newmanager = NewManager()  # custom manager
 
