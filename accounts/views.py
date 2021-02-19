@@ -11,11 +11,38 @@ from django.contrib.auth.models import User
 from .forms import RegistrationForm, UserEditForm, UserProfileForm
 from .tokens import account_activation_token
 from .models import Profile
-from blog.models import Post
+from blog.models import Post, Vote
 from django.http import JsonResponse
+from django.db.models import F
 
 def thumbs(request):
     
+    if request.POST.get('action') == 'thumbs':
+        id = int(request.POST.get('postid'))
+        button = request.POST.get('button')
+        update = Post.objects.get(id=id)
+
+        if button == 'thumbsup':
+            update.thumbsup = F('thumbsup') + 1
+            update.thumbs.add(request.user)
+            update.save()
+
+            new = Vote(post_id=id, user_id=request.user.id, vote=True)
+            new.save()
+        else:
+            update.thumbsdown = F('thumbsdown') + 1
+            update.thumbs.add(request.user)
+            update.save()
+
+            new = Vote(post_id=id, user_id=request.user.id, vote=False)
+            new.save()
+
+        update.refresh_from_db()
+        up = update.thumbsup
+        down = update.thumbsdown
+
+        return JsonResponse({'up': up, 'down': down})
+
 
 @ login_required
 def like(request):

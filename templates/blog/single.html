@@ -74,10 +74,10 @@
       </div>
       <div class="d-flex">
 
-        <span id="thumbs" data-value="{{'post.id'}}"></span>
+        <span id="thumbs" data-value="{{post.id}}"></span>
         <div class="pr-2">
-          <span class="i_like_this"><span id="up">0</span></span>
-          <a href="" class="btn btn-link text-dark p-0 border-0 thumbaction" value="thumbsup" data-toggle="tooltip" title="I like this" role="button">
+          <span id="up">0</span>
+          <a href="" class="btn btn-link text-dark p-0 border-0 btn-outline-light thumbaction" value="thumbsup" data-toggle="tooltip" title="I like this" role="button">
             <svg id="thumbsup" width="1.5em" height="1.5em" viewBox="0 0 16 16" class="up bi bi-hand-thumbs-up" fill="currentColor"
               xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
@@ -88,7 +88,7 @@
 
         <div class="pr-2">
           <span id="down">0</span>
-          <a href="" class="btn btn-link text-dark p-0 border-0 thumbaction" value="thumbsdown" data-toggle="tooltip" title="I like this"
+          <a href="" class="btn btn-link text-dark p-0 border-0 btn-outline-light thumbaction" value="thumbsdown" data-toggle="tooltip" title="I like this"
             role="button">
             <svg id="thumbsdown" width="1.5em" height="1.5em" viewBox="0 0 16 16" class="down bi bi-hand-thumbs-down"
               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -280,12 +280,15 @@
         type: 'POST',
         url: '{% url "accounts:thumbs" %}',
         data: {
-          postid = postid,
-          button = button,
+          postid: postid,
           csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
           action: 'thumbs',
+          button: button,
         },
-        success: function(json) {},
+        success: function(json) {
+          document.getElementById("up").innerHTML = json['up']
+          document.getElementById("down").innerHTML = json['down']
+        },
         error: function(xhr, errmsg, err) {}
       }); 
     });
