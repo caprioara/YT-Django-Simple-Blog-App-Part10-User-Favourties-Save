@@ -14,6 +14,9 @@ from .models import Profile
 from blog.models import Post
 from django.http import JsonResponse
 
+def thumbs(request):
+    
+
 @ login_required
 def like(request):
     if request.POST.get('action') == 'post':
