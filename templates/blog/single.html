@@ -57,6 +57,10 @@
   .smaller {
     font-size: 0.8rem;
   }
+
+  .thumb-active {
+    fill: blue
+  }
 </style>
 
 <div class="container">
@@ -72,11 +76,15 @@
           <div class="col-12 no-gutters smaller text-muted">{{post.publish}}</div>
         </div>
       </div>
+
+
+
+
       <div class="d-flex">
 
         <span id="thumbs" data-value="{{post.id}}"></span>
         <div class="pr-2">
-          <span id="up">0</span>
+          <span id="up">{{post.thumbsup}}</span>
           <a href="" class="btn btn-link text-dark p-0 border-0 btn-outline-light thumbaction" value="thumbsup" data-toggle="tooltip" title="I like this" role="button">
             <svg id="thumbsup" width="1.5em" height="1.5em" viewBox="0 0 16 16" class="up bi bi-hand-thumbs-up" fill="currentColor"
               xmlns="http://www.w3.org/2000/svg">
@@ -87,7 +95,7 @@
         </div>
 
         <div class="pr-2">
-          <span id="down">0</span>
+          <span id="down">{{post.thumbsdown}}</span>
           <a href="" class="btn btn-link text-dark p-0 border-0 btn-outline-light thumbaction" value="thumbsdown" data-toggle="tooltip" title="I like this"
             role="button">
             <svg id="thumbsdown" width="1.5em" height="1.5em" viewBox="0 0 16 16" class="down bi bi-hand-thumbs-down"
@@ -155,6 +163,10 @@
         </div>
         {% endif %}
       </div>
+
+
+
+
     </div>
     <div class="col-md-8 pt-5">
       <img class="card-img-top" src="{{post.image.url}}" alt="{{ post.title }}">
@@ -288,6 +300,10 @@
         success: function(json) {
           document.getElementById("up").innerHTML = json['up']
           document.getElementById("down").innerHTML = json['down']
+
+          $('svg').removeClass('thumb-active');
+          $('#' + button).addClass('thumb-active');
+
         },
         error: function(xhr, errmsg, err) {}
       }); 
