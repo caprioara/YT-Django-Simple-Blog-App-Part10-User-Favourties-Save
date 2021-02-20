@@ -32,14 +32,22 @@ def addcomment(request):
 
     if request.method == 'POST':
         # print(request.POST)
-        comment_form = NewCommentForm(request.POST)
-        if comment_form.is_valid():
-            user_comment = comment_form.save(commit=False)
-            user_comment.author = request.user
-            user_comment.save()
-            result = comment_form.cleaned_data.get('content')
-            user = request.user.username
-            return JsonResponse({'result': result, 'user': user})
+        if request.POST.get('action') == 'delete':
+            id = request.POST.get('nodeid')
+            c = Comment.objects.get(id=id)
+            c.delete()
+            return JsonResponse({'remove': id})
+        else:
+
+            comment_form = NewCommentForm(request.POST)
+
+            if comment_form.is_valid():
+                user_comment = comment_form.save(commit=False)
+                user_comment.author = request.user
+                user_comment.save()
+                result = comment_form.cleaned_data.get('content')
+                user = request.user.username
+                return JsonResponse({'result': result, 'user': user})
 
 
 class CatListView(ListView):
